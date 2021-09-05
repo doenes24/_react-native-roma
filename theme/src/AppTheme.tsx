@@ -8,7 +8,7 @@ export const ThemeContext = React.createContext<{
   Mode: _Mode;
   ModeBool: boolean;
   Theme: any;
-  Toggle: (e: _Mode) => void;
+  Toggle: (e: _Mode|'system') => void;
 }>({
   Mode: 'light',
   ModeBool: true,
@@ -29,6 +29,7 @@ interface _ThemeProviderProps {
 }
 
 export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
+  const scheme = useColorScheme();
   React.useEffect(() => {
     (async () => {
       let a = await AsyncStorage.getItem('ThemeMode');
@@ -38,7 +39,7 @@ export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
         setModeBool(a == 'light');
       } else if (a == 'system') {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        let b = useColorScheme() == 'dark';
+        let b = scheme == 'dark';
         setMode(b ? 'dark' : 'light');
         setModeBool(!b);
       }
@@ -52,7 +53,7 @@ export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
     return new Promise(async (res) => {
       if (tMode == 'system') {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        let b = useColorScheme() == 'dark';
+        let b = scheme == 'dark';
         setMode(b ? 'dark' : 'light');
         setModeBool(!b);
       } else {
@@ -63,6 +64,7 @@ export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
       res(true);
     });
   };
+
 
   const Theme = Mode == 'light' ? theme.light : theme.dark;
 
