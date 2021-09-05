@@ -1,0 +1,19 @@
+{
+  "name": "@react-native-roma/theme",
+  "version": "1.0.6",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doenes24/_react-native-roma.git"
+  },
+  "author": "doenes24",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doenes24/_react-native-roma/issues"
+  },
+  "homepage": "https://github.com/doenes24/_react-native-roma#readme"
+}
