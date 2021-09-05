@@ -7,6 +7,7 @@ type _Mode = 'light' | 'dark';
 export const ThemeContext = React.createContext<{
   Mode: _Mode;
   ModeBool: boolean;
+  ModeComplete: _Mode | 'system',
   Theme: any;
   Toggle: (e: _Mode|'system') => void;
 }>({
@@ -14,6 +15,7 @@ export const ThemeContext = React.createContext<{
   ModeBool: true,
   Theme: {},
   Toggle: () => {},
+  ModeComplete: 'light',
 });
 
 interface _ThemeProviderProps {
@@ -27,6 +29,8 @@ interface _ThemeProviderProps {
     };
   };
 }
+
+let Prev:any = false;
 
 export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
   const scheme = useColorScheme();
@@ -43,11 +47,17 @@ export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
         setMode(b ? 'dark' : 'light');
         setModeBool(!b);
       }
+      if (a=='light'||a=='dark'||a=='system')
+      setModeComplete(a);
     })();
   }, []);
 
   const [Mode, setMode] = React.useState<_Mode>('light');
-  const [ModeBool, setModeBool] = React.useState(true);
+  const [ModeBool, setModeBool] = React.useState<boolean>(true);
+  const [ModeComplete, setModeComplete] = React.useState<_Mode | 'system'>('light');
+
+  // imaginons que Prev != scheme et que ModeComplete == light
+  // il faut que quand l'user passe ModeComplete == system, je puisse passer le mode à scheme.
 
   const Toggle = (tMode: _Mode | 'system') => {
     return new Promise(async (res) => {
@@ -60,16 +70,24 @@ export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
         setMode(tMode);
         setModeBool(tMode == 'light');
       }
+      setModeComplete(tMode);
       await AsyncStorage.setItem('ThemeMode', tMode);
       res(true);
     });
   };
 
+  if (!Prev){
+    Prev = scheme;
+  } else if (Prev != scheme && ModeComplete=='system'){
+    Prev = scheme;
+    Toggle('system');
+  }
+
 
   const Theme = Mode == 'light' ? theme.light : theme.dark;
 
   return (
-    <ThemeContext.Provider value={{ Mode, ModeBool, Theme, Toggle }}>
+    <ThemeContext.Provider value={{ Mode, ModeBool, ModeComplete, Theme, Toggle }}>
       {children}
     </ThemeContext.Provider>
   );
