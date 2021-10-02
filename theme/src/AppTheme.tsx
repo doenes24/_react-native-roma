@@ -84,7 +84,7 @@ export function ThemeProvider({ children, theme }: _ThemeProviderProps) {
   }
 
 
-  const Theme = Mode == 'light' ? theme.light : theme.dark;
+  const Theme:any = {...(Mode == 'light' ? theme.light : theme.dark),Light:theme.light,Dark:theme.dark};
 
   return (
     <ThemeContext.Provider value={{ Mode, ModeBool, ModeComplete, Theme, Toggle }}>
